@@ -770,12 +770,19 @@ func (o languageModel) Stream(ctx context.Context, call fantasy.Call) (fantasy.S
 	}, nil
 }
 
+// isAstraModel also accepts dated snapshots and provider-qualified model IDs.
+func isAstraModel(modelID string) bool {
+	modelID = strings.ToLower(modelID)
+	modelID = modelID[strings.LastIndex(modelID, "/")+1:]
+	return modelID == "gpt-6-astra" || strings.HasPrefix(modelID, "gpt-6-astra-")
+}
+
 func isReasoningModel(modelID string) bool {
 	return strings.HasPrefix(modelID, "o1") || strings.Contains(modelID, "-o1") ||
 		strings.HasPrefix(modelID, "o3") || strings.Contains(modelID, "-o3") ||
 		strings.HasPrefix(modelID, "o4") || strings.Contains(modelID, "-o4") ||
 		strings.HasPrefix(modelID, "oss") || strings.Contains(modelID, "-oss") ||
-		strings.Contains(strings.ToLower(modelID), "gpt-5")
+		strings.Contains(strings.ToLower(modelID), "gpt-5") || isAstraModel(modelID)
 }
 
 func isSearchPreviewModel(modelID string) bool {
